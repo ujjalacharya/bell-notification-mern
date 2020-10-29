@@ -35,19 +35,19 @@ io.on("connection", (socket) => {
 
   // Returning the initial data of food menu from FoodItems collection
   socket.on("initial_data", async () => {
-    const feed = await Feed.find({});
+    const feed = await Feed.find({}).sort({createdAt: -1});
     io.sockets.emit("get_data", feed);
   });
 
   // Placing the order, gets called from /src/main/PlaceOrder.js of Frontend
-  socket.on("post_data", async (order) => {
-    const title = "Just checking in...";
+  socket.on("post_data", async (body) => {
+    const title = body;
     const feed = new Feed({ title });
     await feed.save();
     io.sockets.emit("change_data");
   });
 
-  socket.on("check_all_notifications", async (order) => {
+  socket.on("check_all_notifications", async () => {
     const feeds = await Feed.find({});
 
     feeds.forEach((feed) => {
